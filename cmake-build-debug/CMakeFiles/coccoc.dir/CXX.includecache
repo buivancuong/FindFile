@@ -1,0 +1,46 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/acsim/CLionProjects/coccoc/HandlerDictionary.h
+iostream
+-
+stdio.h
+-
+conio.h
+-
+windows.h
+-
+vector
+-
+string
+-
+
+C:/Users/acsim/CLionProjects/coccoc/main.cpp
+conio.h
+-
+windows.h
+-
+cstdio
+-
+iostream
+-
+fstream
+-
+vector
+-
+string
+-
+string.h
+-
+cstring
+-
+boost/algorithm/string.hpp
+-
+HandlerDictionary.h
+C:/Users/acsim/CLionProjects/coccoc/HandlerDictionary.h
+
