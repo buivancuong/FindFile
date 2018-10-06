@@ -39,6 +39,8 @@ string.h
 -
 cstring
 -
+thread
+-
 boost/algorithm/string.hpp
 -
 HandlerDictionary.h

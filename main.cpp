@@ -9,6 +9,7 @@
 #include <string>
 #include <string.h>
 #include <cstring>
+#include <thread>
 #include <boost/algorithm/string.hpp>
 #include "HandlerDictionary.h"
 
@@ -19,6 +20,30 @@ std::string ExePath() {
     return std::string( buffer ).substr( 0, pos);
 }
 
+void checkFiles(std::vector<std::string> vectorList, int it_begin, int it_end, std::string keyword) {
+    for (int i = it_begin; i < it_end; i++) {
+        std::fstream checkFile;
+        checkFile.open(vectorList[i]);
+        std::string line;
+
+        while (!checkFile.eof()) {
+            std::getline(checkFile, line);
+//            std::cout << "Get line: " << line << std::endl;
+            std::vector<std::string> wordInLine;
+            boost::split(wordInLine, line, boost::is_any_of(" .,;:"));
+
+            for (auto &iter : wordInLine) {
+                if (iter == keyword) {
+                    std::cout << vectorList[i] << std::endl;
+                    break;
+                }
+            }
+        }
+
+        checkFile.close();
+    }
+}
+
 int main(int argc, char *argv[]) {
 
     char *dictionary;
@@ -26,6 +51,7 @@ int main(int argc, char *argv[]) {
 
     if (argc == 1) {
         std::cout << "Xin hay nhap tham so" << std::endl;
+        return 0;
     }
     if (argc == 3) {
         dictionary = argv[2];
@@ -51,29 +77,30 @@ int main(int argc, char *argv[]) {
 
     std::vector<std::string> fileList = handlerDictionary->getListFile();
 
-    for (const auto &i : fileList) {
-//        std::cout << "Checking File " << i << std::endl;
-        std::fstream checkFile;
-        checkFile.open(i);
-        std::string line;
-
-        while (!checkFile.eof()) {
-            std::getline(checkFile, line);
-//            std::cout << "Get line: " << line << std::endl;
-            std::vector<std::string> wordInLine;
-            boost::split(wordInLine, line, boost::is_any_of(" .,;"));
-
-            for (auto &iter : wordInLine) {
-                if (iter == keyword) {
-                    std::cout << i << std::endl;
-                    break;
-                }
-            }
-        }
-
-        checkFile.close();
+    if (fileList.size() >= 4) {
+        std::thread task1 (checkFiles, fileList, 0, fileList.size()/4, keyword);
+        std::thread task2 (checkFiles, fileList, fileList.size()/4, fileList.size()/2, keyword);
+        std::thread task3 (checkFiles, fileList, fileList.size()/2, fileList.size()/4*3, keyword);
+        std::thread task4 (checkFiles, fileList, fileList.size()/4*3, fileList.size(), keyword);
+        task1.join();
+        task2.join();
+        task3.join();
+        task4.join();
+    } else if (fileList.size() == 3) {
+        std::thread task1 (checkFiles, fileList, 0, fileList.size()/3, keyword);
+        std::thread task2 (checkFiles, fileList, fileList.size()/3, fileList.size()/3*2, keyword);
+        std::thread task3 (checkFiles, fileList, fileList.size()/3*2, fileList.size(), keyword);
+        task1.join();
+        task2.join();
+        task3.join();
+    } else if (fileList.size() == 2) {
+        std::thread task1 (checkFiles, fileList, 0, fileList.size()/2, keyword);
+        std::thread task2 (checkFiles, fileList, fileList.size()/2, fileList.size(), keyword);
+        task1.join();
+        task2.join();
+    } else {
+        checkFiles(fileList, 0, static_cast<int>(fileList.size()), keyword);
     }
-
 
     std::cout << "System paused" << std::endl;
     getch();
