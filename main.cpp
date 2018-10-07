@@ -27,6 +27,7 @@ void checkFiles(std::vector<std::string> vectorList, int it_begin, int it_end, s
         std::string line;
 
         while (!checkFile.eof()) {
+            int found = 0;
             std::getline(checkFile, line);
 //            std::cout << "Get line: " << line << std::endl;
             std::vector<std::string> wordInLine;
@@ -35,9 +36,11 @@ void checkFiles(std::vector<std::string> vectorList, int it_begin, int it_end, s
             for (auto &iter : wordInLine) {
                 if (iter == keyword) {
                     std::cout << vectorList[i] << std::endl;
+                    found++;
                     break;
                 }
             }
+            if (found == 1) break;
         }
 
         checkFile.close();
